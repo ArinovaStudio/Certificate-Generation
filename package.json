@@ -11,6 +11,7 @@
   "dependencies": {
     "@prisma/client": "6.19",
     "bcryptjs": "^3.0.3",
+    "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.3",
     "nanoid": "^5.1.6",
     "next": "16.1.6",

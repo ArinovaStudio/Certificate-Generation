@@ -41,7 +41,7 @@ export default function AdminDashboard() {
 
       const res = await fetch(`/api/admin/certificates?${params.toString()}`);
       if (res.status === 401) {
-        router.push('/admin/login');
+        router.push('/login');
         return;
       }
       const json = await res.json();
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/admin/login');
+    router.push('/login');
   };
 
   const handleDeleteClick = (id: string) => {

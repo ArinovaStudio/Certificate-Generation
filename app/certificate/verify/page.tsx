@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 interface CertificateData {
   certificateId: string;
@@ -16,6 +17,7 @@ interface CertificateData {
 }
 
 export default function VerificationPage() {
+  const router = useRouter();
   const [inputID, setInputID] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -41,6 +43,10 @@ export default function VerificationPage() {
 
     try {
       const res = await fetch(`/api/certificate/verify/${inputID}`);
+      if (res.status === 401) {
+        router.push('/login');
+        return;
+      }
       const json = await res.json();
 
       if (!json.success) {

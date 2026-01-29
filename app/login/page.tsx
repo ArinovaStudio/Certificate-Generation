@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({ name: '', password: '' });
+  const [formData, setFormData] = useState({ identifier: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -32,11 +32,15 @@ export default function AdminLoginPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || data.error || "Login failed");
       }
 
-      router.push('/admin/certificate-portal');
+      if (data.role === 'ADMIN') {
+        router.push('/admin/certificate-portal');
+      } else {
+        router.push('/certificate/verify'); 
+      }
       
     } catch (err: any) {
       setError(err.message);
@@ -63,25 +67,25 @@ export default function AdminLoginPage() {
           <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
             A
           </div>
-          <h1 className={`text-2xl font-bold ${textMain}`}>Admin Portal</h1>
-          <p className={`${textSub} text-sm mt-1`}>Sign in to manage certificates</p>
+          <h1 className={`text-2xl font-bold ${textMain}`}>Arinova Portal</h1>
+          <p className={`${textSub} text-sm mt-1`}>Sign in to continue</p>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-5">
           
-          {/* Username Input */}
+          {/* Identifier Input */}
           <div>
             <label className={`block text-xs font-semibold uppercase tracking-wide mb-2 ${textSub}`}>
-              Username
+              Email or Employee ID
             </label>
             <input
               type="text"
               required
               className={`w-full ${inputBg} border ${borderClass} ${textMain} rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
-              placeholder="admin"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="e.g. admin@arinova.studio or EMP-101"
+              value={formData.identifier}
+              onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
             />
           </div>
 

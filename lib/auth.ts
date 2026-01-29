@@ -2,8 +2,9 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import prisma from "./prisma";
 
-export async function checkAdmin() {
+export async function authCheck() {
   const cookieStore = await cookies();
+  
   const token = cookieStore.get('token')?.value;
   const JWT_SECRET = process.env.JWT_SECRET || "My_Jwt_Secret";
 
@@ -14,10 +15,10 @@ export async function checkAdmin() {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, name: true, role: true },
+      select: { id: true, name: true, role: true, employeeId: true, email: true },
     });
 
-    if (user && user.role === 'ADMIN') {
+    if (user) {
       return user;
     }
 

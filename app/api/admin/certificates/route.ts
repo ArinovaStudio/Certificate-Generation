@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { checkAdmin } from '@/lib/auth';
+import { authCheck } from '@/lib/auth';
 import { z } from 'zod';
 import { customAlphabet } from 'nanoid';
 import { writeFile } from 'fs/promises';
@@ -25,8 +25,11 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 }
 
 export async function GET(request: NextRequest) {
-  const admin = await checkAdmin();
-  if (!admin) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+ const user = await authCheck();
+  
+  if (!user || user.role !== 'ADMIN') {
+    return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+  }
 
   const { searchParams } = new URL(request.url);
   const search = searchParams.get('search') || "";     
@@ -60,8 +63,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const admin = await checkAdmin();
-  if (!admin) return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+  const user = await authCheck();
+  
+  if (!user || user.role !== 'ADMIN') {
+    return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+  }
 
   try {
     const formData = await request.formData();

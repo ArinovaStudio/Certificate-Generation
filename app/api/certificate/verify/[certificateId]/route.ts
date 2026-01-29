@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { authCheck } from '@/lib/auth';
 
 export async function GET( request: NextRequest, { params }: { params: Promise<{ certificateId: string }> }) {
   try {
+    const user = await authCheck();
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Unauthorized. Please login." }, { status: 401 });
+    }
+
     const { certificateId } = await params;
 
     const certificate = await prisma.certificate.findUnique({

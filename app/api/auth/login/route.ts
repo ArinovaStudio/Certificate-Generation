@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  name: z.string().min(1, "Username is required"),
+  identifier: z.string().min(1, "Email or Employee ID is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -17,16 +17,23 @@ export async function POST(request: NextRequest) {
     const result = loginSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json(
+      return NextResponse.json( 
         { success: false, message: "Validation Failed", errors: result.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
 
-    const { name, password } = result.data;
+    const { identifier, password } = result.data;
     const JWT_SECRET = process.env.JWT_SECRET || "My_Jwt_Secret";
 
-    const user = await prisma.user.findFirst({ where: { name } });
+    const user = await prisma.user.findFirst({ 
+      where: { 
+        OR: [
+          { email: identifier },
+          { employeeId: identifier }
+        ]
+      } 
+    });
 
     if (!user) {
       return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 401 });
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, role: user.role });
 
   } catch {
     return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });

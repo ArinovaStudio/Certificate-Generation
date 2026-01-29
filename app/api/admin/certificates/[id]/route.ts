@@ -108,8 +108,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ success: true, data: updatedCert });
 
-  } catch (error) {
-    console.error("Update Error:", error);
+  } catch {
     return NextResponse.json({ success: false, message: "Update Failed" }, { status: 500 });
   }
 }
@@ -141,8 +140,7 @@ export async function DELETE(request: NextRequest,  { params }: { params: Promis
 
     return NextResponse.json({ success: true, message: "Certificate deleted successfully" });
 
-  } catch (error) {
-    console.error("Delete Error:", error);
+  } catch {
     return NextResponse.json({ success: false, message: "Delete Failed" }, { status: 500 });
   }
 }

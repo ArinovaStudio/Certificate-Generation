@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log(`🌱 Seeding admin...`);
+  console.log(`🌱 Seeding DB...`);
 
   const user = await prisma.user.findFirst({ where: { email: "admin@example.com" } });
 
@@ -48,7 +48,6 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

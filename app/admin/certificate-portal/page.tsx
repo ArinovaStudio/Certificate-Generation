@@ -224,7 +224,12 @@ export default function AdminDashboard() {
 
                       {/* Cert ID */}
                       <td className="px-6 py-4">
-                        <div className={`font-mono text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{cert.certificateId}</div>
+                        <div className="flex items-center">
+                          <span className={`font-mono text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                            {cert.certificateId}
+                          </span>
+                          <CopyButton text={cert.certificateId} isDark={isDark} />
+                        </div>
                       </td>
 
                       {/* Actions */}
@@ -282,5 +287,45 @@ export default function AdminDashboard() {
       />
 
     </div>
+  );
+}
+
+function CopyButton({ text, isDark }: { text: string, isDark: boolean }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy!', err);
+    }
+  };
+
+  return (
+    <button 
+      onClick={handleCopy}
+      className={`ml-2 p-1.5 rounded-md transition-colors ${
+        copied 
+          ? 'text-green-500 bg-green-500/10' 
+          : isDark 
+            ? 'text-gray-500 hover:text-gray-300 hover:bg-gray-700' 
+            : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'
+      }`}
+      title="Copy to clipboard"
+    >
+      {copied ? (
+        // Checkmark Icon
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        // Clipboard Icon
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+        </svg>
+      )}
+    </button>
   );
 }

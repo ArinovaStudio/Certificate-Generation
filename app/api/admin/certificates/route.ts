@@ -121,8 +121,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newCert, { status: 201 });
 
-  } catch (error) {
-    console.error("Upload Error:", error);
+  } catch {
     return NextResponse.json({ error: "Server Error during upload" }, { status: 500 });
   }
 }

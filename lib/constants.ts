@@ -4,3 +4,8 @@ export const DEPARTMENTS = [
   "UI/UX Design",
   "Marketing"
 ] as const;
+
+export const EMPLOYEE_TYPE = [
+  ["INTR","INTERN"],
+  ["FERL","FREELANCER"]
+];

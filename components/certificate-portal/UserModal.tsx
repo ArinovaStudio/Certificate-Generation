@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { DEPARTMENTS } from "@/lib/constants";
-
-export default function CertificateModal({
+import { DEPARTMENTS, EMPLOYEE_TYPE } from "@/lib/constants";
+export default function UserModal({
   isOpen,
   onClose,
   onRefresh,
   theme,
-  users,
   mode,
   initialData,
 }: any) {
@@ -26,7 +24,6 @@ export default function CertificateModal({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -34,30 +31,17 @@ export default function CertificateModal({
 
     const formData = new FormData(e.currentTarget);
 
-    // Logic to allow resetting download status
-    if (mode === "edit") {
-      const resetDownload = formData.get("resetDownload") === "on";
-      if (resetDownload) {
-        formData.append("isDownloaded", "false");
-      }
-    }
-
     try {
-      const url =
-        mode === "create"
-          ? "/api/admin/certificates"
-          : `/api/admin/certificates/${initialData.id}`;
+      const url = "/api/admin/users";
 
       const method = mode === "create" ? "POST" : "PUT";
-      console.log(Object.fromEntries(formData));
-      const res = await fetch(url, { method, body: formData });
+      const fData = Object.fromEntries(formData);
+      const finalData =
+        method === "PUT" ? { id: initialData.id, ...fData } : { ...fData };
+      const res = await fetch(url, { method, body: JSON.stringify(finalData) });
       const json = await res.json();
 
       if (!res.ok) {
-        if (json.details) {
-          const detailedError = Object.values(json.details).flat().join(", ");
-          throw new Error(detailedError);
-        }
         throw new Error(json.message || "Operation failed");
       }
 
@@ -75,7 +59,7 @@ export default function CertificateModal({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
       <div
-        className={`w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] ${
+        className={`relative! w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] ${
           isDark ? "bg-[#1e232d] border border-gray-700" : "bg-white"
         }`}
       >
@@ -90,9 +74,7 @@ export default function CertificateModal({
               isDark ? "text-white" : "text-gray-900"
             }`}
           >
-            {mode === "create"
-              ? "Upload New Certificate"
-              : "Edit Certificate Details"}
+            {mode === "create" ? "Add New Employee" : "Edit Employee Details"}
           </h2>
           <button
             onClick={onClose}
@@ -107,125 +89,143 @@ export default function CertificateModal({
         {/* Scrollable Form Body */}
         <div className="p-6 overflow-y-auto custom-scrollbar">
           <form id="certForm" onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid gap-5">
+            {/* Row 1 */}
+            <div className="grid lg:grid-cols-2 gap-5">
               <div>
-                <label className={labelClass}>Title</label>
+                <label className={labelClass}>Employee ID</label>
                 <input
-                  type="text"
-                  name="title"
-                  placeholder="Certificate Title"
-                  defaultValue={
-                    initialData?.title
-                      || ""
-                  }
-                  required
-                  className={`${inputBase} ${inputTheme}`}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>Description</label>
-                <textarea
-                  name="description"
-                  rows={5}
-                  placeholder="Certificate Description"
-                  defaultValue={
-                    initialData?.description || ""
-                  }
-                  required
-                  className={`${inputBase} ${inputTheme}`}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>Assign To Employee</label>
-                <select
                   name="employeeId"
+                  defaultValue={initialData?.employeeId}
                   required
-                  defaultValue={initialData?.employeeId || ""}
+                  disabled={mode === "edit"}
+                  className={`${inputBase} ${inputTheme}`}
+                  placeholder="e.g. emp-013"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Full Name</label>
+                <input
+                  name="name"
+                  defaultValue={initialData?.name}
+                  required
+                  className={`${inputBase} ${inputTheme}`}
+                  placeholder="Full Name"
+                />
+              </div>
+            </div>
+
+            {/* Row 2 */}
+            <div
+              className={`grid grid-cols-${
+                mode === "create" ? "2" : "1"
+              } gap-5`}
+            >
+              <div>
+                <label className={labelClass}>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  defaultValue={initialData?.email}
+                  required
+                  className={`${inputBase} ${inputTheme}`}
+                  placeholder="email@example.com"
+                />
+              </div>
+              {mode === "create" && (
+                <div>
+                  <label className={labelClass}>Password</label>
+                  <input
+                    name="password"
+                    required
+                    type="password"
+                    className={`${inputBase} ${inputTheme}`}
+                    placeholder="********"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className={labelClass}>Role / Designation</label>
+                <input
+                  name="designation"
+                  defaultValue={initialData?.designation}
+                  required
+                  className={`${inputBase} ${inputTheme}`}
+                  placeholder="Full Stack Developer"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Department</label>
+                <select
+                  name="department"
+                  required
+                  defaultValue={initialData?.department || ""}
                   className={`${inputBase} ${inputTheme}`}
                 >
                   <option value="" disabled>
-                    Select Employee
+                    Select Department
                   </option>
-                  {
-                    users.map((user: any)=>{
-                      return <option key={user.employeeId} value={user.employeeId}>{user.name}</option>
-                    })
-                  }
+                  {DEPARTMENTS.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
 
-            {/* File Upload Area */}
-            <div
-              className={`p-5 rounded-xl border border-dashed transition-colors ${
-                isDark
-                  ? "border-gray-700 bg-[#0f1219]/50 hover:border-gray-500"
-                  : "border-gray-300 bg-gray-50 hover:border-gray-400"
-              }`}
-            >
-              <label className={labelClass}>Certificate PDF</label>
-              <div className="mt-2 flex items-center gap-4">
+            <div className="grid grid-cols-2 gap-5">
+              <div>
+                <label className={labelClass}>Date of Joining</label>
                 <input
-                  type="file"
-                  name="file"
-                  accept="application/pdf"
-                  required={mode === "create"}
-                  className={`block w-full text-sm ${
-                    isDark ? "text-gray-300" : "text-gray-500"
+                  type="date"
+                  name="startDate"
+                  defaultValue={
+                    initialData?.startDate
+                      ? format(new Date(initialData.startDate), "yyyy-MM-dd")
+                      : ""
                   }
-                    file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0
-                    file:text-xs file:font-semibold
-                    file:bg-indigo-600 file:text-white
-                    hover:file:bg-indigo-700 transition-all cursor-pointer`}
+                  className={`${inputBase} ${inputTheme}`}
                 />
               </div>
-              {mode === "edit" && (
-                <p
-                  className={`text-xs mt-2 ${
-                    isDark ? "text-gray-500" : "text-gray-400"
-                  }`}
-                >
-                  Current file:{" "}
-                  <span className="font-mono">{initialData.fileName}</span>{" "}
-                  (Upload to replace)
-                </p>
-              )}
+              <div>
+                <label className={labelClass}>End Date</label>
+                <input
+                  type="date"
+                  name="endDate"
+                  defaultValue={
+                    initialData?.endDate
+                      ? format(new Date(initialData.endDate), "yyyy-MM-dd")
+                      : ""
+                  }
+                  className={`${inputBase} ${inputTheme}`}
+                />
+              </div>
             </div>
 
-            {/* Reset Toggle (Edit Only) */}
-            {mode === "edit" && (
-              <div
-                className={`flex items-center gap-3 p-4 rounded-xl border ${
-                  isDark
-                    ? "bg-indigo-500/10 border-indigo-500/20"
-                    : "bg-indigo-50 border-indigo-100"
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  name="resetDownload"
-                  id="resetDownload"
-                  className="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                />
-                <div>
-                  <label
-                    htmlFor="resetDownload"
-                    className={`block text-sm font-medium cursor-pointer ${
-                      isDark ? "text-gray-200" : "text-gray-800"
-                    }`}
-                  >
-                    Reset Download Status
-                  </label>
-                  <p
-                    className={`text-xs ${
-                      isDark ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    Allow the intern to download this file one more time.
-                  </p>
-                </div>
+            <div className="grid gap-5">
+              <div>
+                <label className={labelClass}>Employee Type</label>
+                <select
+                  name="employeeType"
+                  required
+                  defaultValue={initialData?.employeeType || ""}
+                  className={`${inputBase} ${inputTheme}`}
+                >
+                  <option value="" disabled>
+                    Select Employee Type
+                  </option>
+                  {EMPLOYEE_TYPE.map(([empKey,empType]) => (
+                    <option key={empKey} value={empKey}>
+                      {empType}
+                    </option>
+                  ))}
+                </select>
               </div>
-            )}
+            </div>
 
             {error && (
               <div className="p-4 bg-red-500/10 text-red-500 text-sm rounded-xl border border-red-500/20 flex items-center gap-2">
@@ -275,7 +275,7 @@ export default function CertificateModal({
             {loading && (
               <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></span>
             )}
-            {mode === "create" ? "Upload Certificate" : "Save Changes"}
+            {mode === "create" ? "Add Employee" : "Update Employee"}
           </button>
         </div>
       </div>

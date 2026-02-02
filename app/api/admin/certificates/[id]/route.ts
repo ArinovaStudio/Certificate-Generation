@@ -9,15 +9,30 @@ import fs from 'fs';
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'certificates');
 
 const updateSchema = z.object({
-  employeeId: z.string().min(1, "Employee ID is required"),
-  candidateName: z.string().min(1, "Candidate Name is required"),
-  position: z.string().min(1, "Position is required"),
-  department: z.string().min(1, "Department is required"),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
-  isDownloaded: z.string().transform((val) => val === 'true').optional(), 
+  title: z.string().min(1, "Employee ID is required"),
+  description: z.string().min(1, "Candidate Name is required"),
+  employeeId: z.string().min(1, "Position is required"),
+  resetDownload: z.boolean().default(false)
 });
+export async function GET(request: NextRequest,{params}:{params: Promise<{id: string}>}) {
 
+  const id = (await params).id;
+
+
+  try {
+    const certificate = await prisma.certificate.findUnique({
+      where:{
+        certificateId: id
+      }
+    });
+    if(certificate){
+      return NextResponse.json({ success: true, certificate });
+    }
+    return NextResponse.json({ success: false, message: "Certificate Not Found!" });
+  } catch {
+    return NextResponse.json({ success: false, message: "Failed to fetch data" }, { status: 500 });
+  }
+}
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await authCheck();
     
@@ -32,11 +47,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const body = {
       employeeId: formData.get('employeeId'),
-      candidateName: formData.get('candidateName'),
-      position: formData.get('position'),
-      department: formData.get('department'),
-      startDate: formData.get('startDate'),
-      endDate: formData.get('endDate'),
+      title: formData.get("title"),
+      description: formData.get("description"),
       isDownloaded: formData.get('isDownloaded') || undefined,
     };
 
@@ -51,8 +63,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (!existingCert) {
       return NextResponse.json({ success: false, message: "Certificate not found" }, { status: 404 });
     }
-
-    const safeName = data.candidateName.replace(/[^a-zA-Z0-9]/g, '_'); 
+    const employee = await prisma.user.findUnique({where: {employeeId:data.employeeId,role:"EMPLOYEE"}});
+    if (!employee) {
+      return NextResponse.json({ success: false, message: "Employee Does not exist!" }, { status: 404 });
+    }
+    const safeName = employee.name.replace(/[^a-zA-Z0-9]/g, '_'); 
     const expectedFileName = `${data.employeeId}_${safeName}.pdf`;
     
     let finalFileName = existingCert.fileName;
@@ -95,14 +110,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       where: { id: certId },
       data: {
         employeeId: data.employeeId,
-        candidateName: data.candidateName,
-        position: data.position,
-        department: data.department,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        title: data.title,
+        description: data.description,
         fileName: finalFileName,
         fileUrl: finalFileUrl,
-        ...(data.isDownloaded !== undefined && { isDownloaded: data.isDownloaded }),
+        ...(data.resetDownload !== undefined && { isDownloaded: data.resetDownload ? false:data.resetDownload }),
       }
     });
 

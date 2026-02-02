@@ -7,51 +7,46 @@ import CertificateModal from "@/components/certificate-portal/CertificateModal";
 import DeleteModal from "@/components/certificate-portal/DeleteModal";
 import Sidebar from "@/components/certificate-portal/Sidebar";
 import { useTheme } from "next-themes";
-import { FileUp, Loader2 } from "lucide-react";
+import EmployeeProfileCard from "@/components/EmployeeProfileCard";
+import UserModal from "@/components/certificate-portal/UserModal";
+import { FileUp, Loader2, User2 } from "lucide-react";
 import Button from "@/components/flowbite/Button";
-import CertificateCard from "@/components/CertificateCard";
-export default function AdminDashboard() {
+export default function AdminEmployeeDashboard() {
   const router = useRouter();
   const { theme } = useTheme();
-  const [certificates, setCertificates] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
-
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedCert, setSelectedCert] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [users, setUsers] = useState([]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const request = await fetch("/api/admin/users/basic-info", {
-        headers: { "Content-Type": "application/json" },
-      });
-      const response = await request.json();
-      setUsers(response.users);
-      await fetchCertificates();
-    };
-    fetchData();
+    fetchUsers();
   }, []);
 
-  const fetchCertificates = async () => {
+  const fetchUsers = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.append("search", search);
       if (deptFilter !== "All") params.append("department", deptFilter);
 
-      const res = await fetch(`/api/admin/certificates?${params.toString()}`);
+      const res = await fetch(`/api/admin/users?${params.toString()}`);
       if (res.status === 401) {
         router.push("/login");
         return;
       }
       const json = await res.json();
-      setCertificates(json.certificates || []);
+      if (json.success) {
+        setEmployees(json.users || []);
+        setFilteredEmployees(json.users || []);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -59,37 +54,31 @@ export default function AdminDashboard() {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => fetchCertificates(), 500);
-    return () => clearTimeout(timer);
-  }, [search, deptFilter]);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => fetchUsers(), 500);
+  //   return () => clearTimeout(timer);
+  // }, [search]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
   };
 
-  const handleDeleteClick = (id: string) => {
-    setDeleteId(id);
-    setIsDeleteOpen(true);
-  };
-
   const confirmDelete = async () => {
     if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/certificates/${deleteId}`, {
+      const res = await fetch(`/api/admin/users?id=${deleteId}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        fetchCertificates();
+        fetchUsers();
       } else {
-        alert("Failed to delete certificate");
+        alert("Failed to delete User");
       }
     } catch (error) {
       console.error("Delete failed", error);
     }
   };
-
   const isDark = theme === "dark";
   const pageBg = isDark ? "bg-[#151923]" : "bg-gray-100";
   const cardBg = isDark ? "bg-[#1e232d]" : "bg-white";
@@ -101,7 +90,7 @@ export default function AdminDashboard() {
       className={`min-h-screen ${pageBg} font-sans transition-colors duration-300`}
     >
       <Sidebar
-        theme={theme as "dark" | "light"}
+        theme={theme as "light" | "dark"}
         onLogout={handleLogout}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -165,7 +154,7 @@ export default function AdminDashboard() {
                 isDark ? "text-gray-400" : "text-gray-500"
               }`}
             >
-              Manage certificates and intern records.
+              Manage Employees.
             </p>
           </div>
           <button
@@ -213,8 +202,18 @@ export default function AdminDashboard() {
               type="text"
               placeholder="Search interns..."
               className={`w-full h-11 pl-12 pr-4 rounded-xl border-none outline-none bg-transparent ${textMain} placeholder-gray-500`}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setFilteredEmployees(
+                  employees.filter(
+                    (employee) =>
+                      (deptFilter === employee.department ||
+                        deptFilter === "All") &&
+                      employee.name
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase())
+                  )
+                );
+              }}
             />
           </div>
 
@@ -229,7 +228,18 @@ export default function AdminDashboard() {
               isDark ? "border-gray-700" : "border-gray-200"
             }`}
             value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
+            onChange={(e) => {
+              setDeptFilter(e.target.value);
+              if (e.target.value === "All") {
+                setFilteredEmployees(employees);
+              } else {
+                setFilteredEmployees(
+                  employees.filter(
+                    (employee) => e.target.value === employee.department
+                  )
+                );
+              }
+            }}
           >
             <option
               value="All"
@@ -255,51 +265,61 @@ export default function AdminDashboard() {
 
         {/* Data Table */}
         <div
-          className={`rounded-2xl border overflow-hidden ${borderClass} ${cardBg} shadow-xl`}
+          className={`rounded-2xl grid ${
+            !loading && filteredEmployees.length > 0 && "md:grid-cols-2"
+          } gap-5 p-4 border overflow-hidden ${borderClass} ${cardBg} shadow-xl`}
         >
-          <div className="overflow-x-auto custom-scrollbar">
-            <div className="p-4 py-8">
-              {loading === false ? (
-                certificates.length > 0 ? (
-                  certificates.map((certificate) => {
-                    return <CertificateCard CopyButton={CopyButton} certificate={certificate} key={certificate.id} onEdit={() => { setSelectedCert(certificate); setIsEditOpen(true); }} onDelete={() => handleDeleteClick(certificate.id)}/>
-                  })
-                ) : (
-                  <div className="mx-auto flex flex-col justify-center items-center gap-3">
-                    <FileUp size={30}/>
-                   <div className="text-gray-700"> No Certificates Uploaded Yet!</div>
-                   <Button onClick={() => setIsAddOpen(true)}>Upload Certificate</Button>
-                  </div>
-                )
-              ) : (
-                <Loader2 className="animate-spin mx-auto" />
-              )}
+          {/* <EmployeeProfileCard/> */}
+          {loading ? (
+            <Loader2 className="animate-spin mx-auto! my-8" />
+          ) : (
+            filteredEmployees?.map((employee) => {
+              return (
+                <EmployeeProfileCard
+                  setDeleteId={setDeleteId}
+                  setDeleteOpen={setIsDeleteOpen}
+                  setSelectedUser={setSelectedUser}
+                  setIsEditOpen={setIsEditOpen}
+                  key={employee.id}
+                  employee={employee}
+                />
+              );
+            })
+          )}
+          {!loading && filteredEmployees.length === 0 && (
+            <div className="mx-auto flex flex-col justify-center items-center gap-1 my-3">
+              <User2 size={30} />
+              <div className="text-gray-700">
+                {" "}
+                No Employees Added!
+              </div>
+              <Button onClick={() => setIsAddOpen(true)}>
+                Add Employee
+              </Button>
             </div>
-          </div>
+          )}
         </div>
       </main>
 
-      <CertificateModal
+      <UserModal
         isOpen={isAddOpen}
-        users={users}
         onClose={() => setIsAddOpen(false)}
-        onRefresh={fetchCertificates}
+        onRefresh={fetchUsers}
         theme={theme}
         mode="create"
       />
 
-      {selectedCert && (
-        <CertificateModal
+      {selectedUser && (
+        <UserModal
           isOpen={isEditOpen}
-          users={users}
           onClose={() => {
             setIsEditOpen(false);
-            setSelectedCert(null);
+            setSelectedUser(null);
           }}
-          onRefresh={fetchCertificates}
+          onRefresh={fetchUsers}
           theme={theme}
           mode="edit"
-          initialData={selectedCert}
+          initialData={selectedUser}
         />
       )}
 
@@ -307,70 +327,50 @@ export default function AdminDashboard() {
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={confirmDelete}
-        theme={theme as "dark" | "light"}
-        title="Delete Certificate?"
-        message="Are you sure you want to permanently delete this certificate? This action cannot be undone."
+        theme={theme as "light" | "dark"}
+        title="Delete User?"
+        message="Are you sure you want to permanently delete this User? This action cannot be undone."
       />
     </div>
   );
 }
 
-function CopyButton({ text, isDark }: { text: string; isDark: boolean }) {
-  const [copied, setCopied] = useState(false);
+// function CopyButton({ text, isDark }: { text: string, isDark: boolean }) {
+//   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy!", err);
-    }
-  };
+//   const handleCopy = async () => {
+//     try {
+//       await navigator.clipboard.writeText(text);
+//       setCopied(true);
+//       setTimeout(() => setCopied(false), 2000);
+//     } catch (err) {
+//       console.error('Failed to copy!', err);
+//     }
+//   };
 
-  return (
-    <button
-      onClick={handleCopy}
-      className={`ml-2 p-1.5 rounded-md transition-colors ${
-        copied
-          ? "text-green-500 bg-green-500/10"
-          : isDark
-          ? "text-gray-500 hover:text-gray-300 hover:bg-gray-700"
-          : "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
-      }`}
-      title="Copy to clipboard"
-    >
-      {copied ? (
-        // Checkmark Icon
-        <svg
-          className="w-3.5 h-3.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      ) : (
-        // Clipboard Icon
-        <svg
-          className="w-3.5 h-3.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-          />
-        </svg>
-      )}
-    </button>
-  );
-}
+//   return (
+//     <button
+//       onClick={handleCopy}
+//       className={`ml-2 p-1.5 rounded-md transition-colors ${
+//         copied
+//           ? 'text-green-500 bg-green-500/10'
+//           : isDark
+//             ? 'text-gray-500 hover:text-gray-300 hover:bg-gray-700'
+//             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-200'
+//       }`}
+//       title="Copy to clipboard"
+//     >
+//       {copied ? (
+//         // Checkmark Icon
+//         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+//         </svg>
+//       ) : (
+//         // Clipboard Icon
+//         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+//         </svg>
+//       )}
+//     </button>
+//   );
+// }

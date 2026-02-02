@@ -10,12 +10,9 @@ import fs from 'fs';
 const nanoid = customAlphabet('23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz', 12);
 
 const certificateSchema = z.object({
-  employeeId: z.string().min(1, "Employee ID is required"),
-  candidateName: z.string().min(1, "Candidate Name is required"),
-  position: z.string().min(1, "Position is required"),
-  department: z.string().min(1, "Department is required"),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date(),
+  title: z.string().min(1, "Employee ID is required"),
+  description: z.string().min(1, "Candidate Name is required"),
+  employeeId: z.string().min(1, "Position is required"),
 });
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'certificates');
@@ -51,9 +48,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const certificates = await prisma.certificate.findMany({
+    const certificates = (await prisma.certificate.findMany({
       where: whereClause,
       orderBy: { createdAt: 'desc' },
+      include: {user: true}
+    })).map((certificate)=>{
+      return {...certificate,department:certificate.user.department};
     });
 
     return NextResponse.json({ success: true, certificates });
@@ -74,12 +74,9 @@ export async function POST(request: NextRequest) {
     
     const file = formData.get('file') as File | null;
     const body = {
+      title: formData.get('title'),
+      description: formData.get('description'),
       employeeId: formData.get('employeeId'),
-      candidateName: formData.get('candidateName'),
-      position: formData.get('position'),
-      department: formData.get('department'),
-      startDate: formData.get('startDate'),
-      endDate: formData.get('endDate'),
     };
 
     const result = certificateSchema.safeParse(body);
@@ -94,28 +91,27 @@ export async function POST(request: NextRequest) {
     if (file.type !== 'application/pdf') {
       return NextResponse.json({ success: false, message: "Only PDF files are allowed" }, { status: 400 });
     }
-
-    const safeName = data.candidateName.replace(/[^a-zA-Z0-9]/g, '_'); 
-    const finalFileName = `${data.employeeId}_${safeName}.pdf`;
+    const user = await prisma.user.findFirst({where:{employeeId:data.employeeId}});
+    if (!user) {
+      return NextResponse.json({ success: false, message: "User Data is Invalid" }, { status: 400 });
+    }    
+    const certId = nanoid();
+    const finalFileName = `ARV-${user.employeeType}-${certId}.pdf`;
     const finalFilePath = path.join(UPLOAD_DIR, finalFileName);
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     await writeFile(finalFilePath, buffer);
 
-    const certId = nanoid();
 
     const newCert = await prisma.certificate.create({
       data: {
         certificateId: certId,
+        title: data.title,
+        description: data.description,
         employeeId: data.employeeId,
-        candidateName: data.candidateName,
-        position: data.position,
-        department: data.department,
         fileName: finalFileName,
-        fileUrl: `/certificates/${finalFileName}`,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        fileUrl: `/certificates/${finalFileName}`
       }
     });
 

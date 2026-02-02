@@ -2,21 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { useTheme } from 'next-themes';
 export default function LoginPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({ identifier: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const {theme} = useTheme();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-      if (storedTheme) setTheme(storedTheme);
-    }
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

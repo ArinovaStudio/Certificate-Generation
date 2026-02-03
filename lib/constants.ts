@@ -2,10 +2,60 @@ export const DEPARTMENTS = [
   "Web Development",
   "AI Engineer",
   "UI/UX Design",
-  "Marketing"
+  "Marketing",
+  "Mobile App Development",
+  "Software Development",
+  "AI/ML Solutions",
+  "Data Engineering & Analytics",
+  "Cybersecurity",
+  "Cloud Architect & DevOps",
+  "Sass Development",
+  "Ecommerce Development",
+  "API Integrations",
+  "Automation & RPA",
+  "Quality Assurance & Testing",
+  "Performance Optimization",
+  "SEO & Growth Engineering",
+  "Digital Marketing",
+  "Brand & Creative Design",
+  "Product Management",
+  "Project Management",
+  "IT Consulting & Stratergy",
+  "Maintenance & Support",
+  "Research & Innovation",
+  "HR & Talent Management",
 ] as const;
 
 export const EMPLOYEE_TYPE = [
   ["INTR","INTERN"],
   ["FERL","FREELANCER"]
+];
+
+
+export const POSITIONS = [
+  "Frontend Developer",
+  "Backend Developer",
+  "Fullstack Developer",
+  "Mobile App Developer",
+  "UI/UX Designer",
+  "Project Manager",
+  "QA Engineer",
+  "DevOps Engineer",
+  "Cloud Engineer",
+  "AI/ML Engineer",
+  "Data Engineer",
+  "Cybersecurity Analyst",
+  "SEO Specialist",
+  "Digital marketing Manager",
+  "Content Strategist",
+  "Brand Designer",
+  "Sales Executive",
+  "Business Development Manager",
+  "Client Success Manager",
+  "HR Manager",
+  "Talent Acquisition Specialist",
+  "Operations Manager",
+  "Technical Support Engineer",
+  "INTERN/TRAINER",
+  "Others"
 ];

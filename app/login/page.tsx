@@ -33,7 +33,7 @@ export default function LoginPage() {
       if (data.role === 'ADMIN') {
         router.push('/admin/certificate-portal');
       } else {
-        router.push('/certificate/verify'); 
+        router.push('/user/certificates'); 
       }
       
     } catch (err: any) {

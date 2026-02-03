@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { DEPARTMENTS, EMPLOYEE_TYPE } from "@/lib/constants";
+import { DEPARTMENTS, EMPLOYEE_TYPE, POSITIONS } from "@/lib/constants";
 export default function UserModal({
   isOpen,
   onClose,
@@ -146,16 +146,24 @@ export default function UserModal({
             </div>
 
             {/* Row 3 */}
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid md:grid-cols-2 gap-5">
               <div>
                 <label className={labelClass}>Role / Designation</label>
-                <input
+                <select
                   name="designation"
-                  defaultValue={initialData?.designation}
                   required
-                  className={`${inputBase} ${inputTheme}`}
-                  placeholder="Full Stack Developer"
-                />
+                  defaultValue={initialData?.employeeType || ""}
+                  className={`uppercase ${inputBase} ${inputTheme}`}
+                >
+                  <option value="" disabled>
+                    Select Employee Position
+                  </option>
+                  {POSITIONS.map((position) => (
+                    <option className="uppercase" key={position} value={position}>
+                      {position}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className={labelClass}>Department</label>
@@ -163,13 +171,13 @@ export default function UserModal({
                   name="department"
                   required
                   defaultValue={initialData?.department || ""}
-                  className={`${inputBase} ${inputTheme}`}
+                  className={`uppercase ${inputBase} ${inputTheme}`}
                 >
                   <option value="" disabled>
                     Select Department
                   </option>
                   {DEPARTMENTS.map((dept) => (
-                    <option key={dept} value={dept}>
+                    <option className="uppercase" key={dept} value={dept}>
                       {dept}
                     </option>
                   ))}
@@ -177,7 +185,7 @@ export default function UserModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid md:grid-cols-2 gap-5">
               <div>
                 <label className={labelClass}>Date of Joining</label>
                 <input
@@ -218,7 +226,7 @@ export default function UserModal({
                   <option value="" disabled>
                     Select Employee Type
                   </option>
-                  {EMPLOYEE_TYPE.map(([empKey,empType]) => (
+                  {EMPLOYEE_TYPE.map(([empKey, empType]) => (
                     <option key={empKey} value={empKey}>
                       {empType}
                     </option>

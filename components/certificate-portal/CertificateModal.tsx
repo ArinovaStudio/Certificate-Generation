@@ -109,6 +109,22 @@ export default function CertificateModal({
           <form id="certForm" onSubmit={handleSubmit} className="space-y-5">
             <div className="grid gap-5">
               <div>
+                <label className={labelClass}>Certificate Id</label>
+                <input
+                  type="text"
+                  name="certificateId"
+                  placeholder="Certificate Id"
+                  defaultValue={
+                    initialData?.certificateId
+                      || ""
+                  }
+                  onChange={(e)=>{e.target.value=e.target.value.trim()}}
+                  disabled={mode==="edit"}
+                  required
+                  className={`${inputBase} ${inputTheme}`}
+                />
+              </div>
+              <div>
                 <label className={labelClass}>Title</label>
                 <input
                   type="text"

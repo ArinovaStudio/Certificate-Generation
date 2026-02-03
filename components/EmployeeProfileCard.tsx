@@ -36,7 +36,7 @@ export default function EmployeeProfileCard({
 }: any) {
   return (
     <Card className="max-w-2xl border-white/10">
-      <CardContent className="px-6 py-2">
+      <CardContent className="px-6 py-2 relative">
         {/* Header */}
         <div className="flex max-md:flex-col max-md:items-center max-md:justify-center items-start gap-4">
           <Avatar className="h-14 w-14 bg-gradient-to-br from-purple-500 to-indigo-600">
@@ -69,11 +69,11 @@ export default function EmployeeProfileCard({
         </div>
         <div className="flex items-center justify-between">
           
-          <div className="flex items-center gap-1 text-gray-900">
+          <div className="flex max-md:text-center items-center gap-1 text-gray-900">
             <div className="uppercase">Employee Type- </div>
             {employee.employeeType==="INTR" ? "INTERN":"FREELANCER"}
             </div>
-        <div className="space-x-3 float-right mt-3 max-md:float-center">
+        <div className="max-md:absolute top-0 right-4 space-x-3 float-right md:mt-3 max-md:float-center">
           <Button
             type="button"
             onClick={() => {

@@ -10,19 +10,19 @@ import {
 import Button from "@/components/flowbite/Button";
 import { Download, Trash2, Pencil, FileDown } from "lucide-react";
 import { Button as ShadcnButton } from "./ui/button";
+import { useState } from "react";
 interface CertificateCardProps {
+  fetchCertificates: any;
   CopyButton?: any;
   certificate: any;
-  onEdit?: () => void;
-  onDelete?: () => void;
 }
 
-export default function CertificateCard({
+export default function CertificateUserCard({
+    fetchCertificates,
     CopyButton,
-  certificate,
-  onEdit,
-  onDelete,
+  certificate
 }: CertificateCardProps) {
+  const [loading,setLoading] = useState(false);
   const downloadFile = () => {
     const element = document.createElement("a");
     element.id = "download-pdf";
@@ -33,32 +33,26 @@ export default function CertificateCard({
     element.click();
     element.remove();
   };
+  const downloadHandler = async () => {
+    setLoading(true);
+    try{
+    const request = await fetch(`/api/user`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({certificateId:certificate.certificateId})})
+    const response = await request.json();
+    if(response.success){
+      downloadFile();
+      fetchCertificates();
+    }
+    }catch(error){
+
+    }
+    setLoading(false);
+}
   return (
     <Card className="w-full md:max-w-md py-0! overflow-hidden rounded-2xl shadow-lg">
       {/* Image Preview */}
       <div className="relative h-44 w-full">
         <div className="h-full flex items-center justify-center bg-gray-200">
           <FileDown className="text-gray-600" size={50} />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="absolute right-3 top-3 flex gap-2">
-          <ShadcnButton
-            size="icon"
-            variant="secondary"
-            className="h-9 w-9 rounded-full"
-            onClick={onEdit}
-          >
-            <Pencil className="h-4 w-4" />
-          </ShadcnButton>
-          <ShadcnButton
-            size="icon"
-            variant="destructive"
-            className="h-9 w-9 rounded-full"
-            onClick={onDelete}
-          >
-            <Trash2 className="h-4 w-4" />
-          </ShadcnButton>
         </div>
       </div>
 
@@ -81,7 +75,7 @@ export default function CertificateCard({
           Download Status:
           </div>
           <div>
-            {<div className={`p-1 px-2 shadow-lg text-xs rounded-full ${certificate?.isDownloaded ? "bg-green-500" : "bg-yellow-500 animate-pulse"}`}>{certificate?.isDownloaded ? "Downloaded":"Not Downloaded!"}</div>}
+            {<div className={`p-1 px-2 shadow-lg text-xs rounded-full ${certificate?.isDownloaded ? "bg-green-500" : "bg-yellow-500 animate-pulse"}`}>{certificate?.isDownloaded ? "Downloaded":"Not Downloaded Yet!"}</div>}
           </div>
         </div>
         <div className="flex items-center justify-start gap-2">
@@ -98,9 +92,9 @@ export default function CertificateCard({
         <p className="text-slate-500">
           {new Date(certificate?.createdAt).toLocaleDateString()}
         </p>
-        <Button onClick={downloadFile}>
+        <Button disabled={certificate?.isDownloaded || loading} onClick={downloadHandler}>
           <Download size={20} />
-          Download
+          {certificate?.isDownloaded ? "Downloaded":"Download"}
         </Button>
       </CardFooter>
     </Card>

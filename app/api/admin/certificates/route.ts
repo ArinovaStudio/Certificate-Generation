@@ -13,6 +13,7 @@ const certificateSchema = z.object({
   title: z.string().min(1, "Employee ID is required"),
   description: z.string().min(1, "Candidate Name is required"),
   employeeId: z.string().min(1, "Position is required"),
+  certificateId: z.string().min(1,"Certificate Id Is Required")
 });
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'certificates');
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
       title: formData.get('title'),
       description: formData.get('description'),
       employeeId: formData.get('employeeId'),
+      certificateId: formData.get("certificateId")
     };
 
     const result = certificateSchema.safeParse(body);
@@ -84,7 +86,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json( { success: false, message: "Validation Error", details: result.error.flatten().fieldErrors }, { status: 400 });
     }
     const data = result.data;
-
+    const certificate = await prisma.certificate.findFirst({where:{certificateId:data.certificateId}});
+    if (certificate) {
+      return NextResponse.json({ success: false, message: "Certificate Id Already Exists!" }, { status: 400 });
+    }
     if (!file) {
       return NextResponse.json({ success: false, message: "Certificate PDF file is required" }, { status: 400 });
     }
@@ -95,8 +100,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ success: false, message: "User Data is Invalid" }, { status: 400 });
     }    
-    const certId = nanoid();
-    const finalFileName = `ARV-${user.employeeType}-${certId}.pdf`;
+    const finalFileName = `ARV-${user.employeeType}-${data.certificateId}.pdf`;
     const finalFilePath = path.join(UPLOAD_DIR, finalFileName);
 
     const bytes = await file.arrayBuffer();
@@ -106,7 +110,7 @@ export async function POST(request: NextRequest) {
 
     const newCert = await prisma.certificate.create({
       data: {
-        certificateId: certId,
+        certificateId: data.certificateId,
         title: data.title,
         description: data.description,
         employeeId: data.employeeId,

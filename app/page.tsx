@@ -8,7 +8,7 @@ export default function Home() {
     <div>
       <Navbar />
       <HeroSection />
-      <BrandingSection />
+      {/* <BrandingSection /> */}
       <AnalyticsSection />
     </div>
   );

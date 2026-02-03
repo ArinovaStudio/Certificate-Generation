@@ -25,7 +25,6 @@ export default function HeroSection() {
         headers: { "Content-Type": "application/json" },
       });
       const response = await request.json();
-      console.log(response);
       if (response.success) {
         const certificate = response.certificate;
         const element = document.createElement("a");

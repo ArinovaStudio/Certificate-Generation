@@ -258,23 +258,39 @@ export default function AdminDashboard() {
           className={`rounded-2xl border overflow-hidden ${borderClass} ${cardBg} shadow-xl`}
         >
           <div className="overflow-x-auto custom-scrollbar">
-            <div className="p-4 py-8">
-              {loading === false ? (
-                certificates.length > 0 ? (
-                  certificates.map((certificate) => {
-                    return <CertificateCard CopyButton={CopyButton} certificate={certificate} key={certificate.id} onEdit={() => { setSelectedCert(certificate); setIsEditOpen(true); }} onDelete={() => handleDeleteClick(certificate.id)}/>
-                  })
-                ) : (
-                  <div className="mx-auto flex flex-col justify-center items-center gap-3">
-                    <FileUp size={30}/>
-                   <div className="text-gray-700"> No Certificates Uploaded Yet!</div>
-                   <Button onClick={() => setIsAddOpen(true)}>Upload Certificate</Button>
-                  </div>
-                )
+            {loading === false ? (
+              certificates.length > 0 ? (
+                <div className="p-4 py-8 grid md:grid-cols-3 gap-5">
+                  {certificates.map((certificate) => {
+                    return (
+                      <CertificateCard
+                        CopyButton={CopyButton}
+                        certificate={certificate}
+                        key={certificate.id}
+                        onEdit={() => {
+                          setSelectedCert(certificate);
+                          setIsEditOpen(true);
+                        }}
+                        onDelete={() => handleDeleteClick(certificate.id)}
+                      />
+                    );
+                  })}
+                </div>
               ) : (
-                <Loader2 className="animate-spin mx-auto" />
-              )}
-            </div>
+                <div className="mx-auto my-6 flex flex-col justify-center items-center gap-3">
+                  <FileUp size={30} />
+                  <div className="text-gray-700">
+                    {" "}
+                    No Certificates Uploaded Yet!
+                  </div>
+                  <Button onClick={() => setIsAddOpen(true)}>
+                    Upload Certificate
+                  </Button>
+                </div>
+              )
+            ) : (
+              <Loader2 className="animate-spin my-6 mx-auto" />
+            )}
           </div>
         </div>
       </main>

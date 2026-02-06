@@ -9,12 +9,7 @@ export async function GET( request: NextRequest, { params }: { params: Promise<{
       where: { certificateId: certificateId },
       select: {
         certificateId: true,
-        candidateName: true,
         employeeId: true,
-        position: true,
-        department: true,
-        startDate: true,
-        endDate: true,
         createdAt: true, 
         isDownloaded: true
       }

@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Button from "../flowbite/Button";
 import Input from "../flowbite/Input";
-import CertificateModal from "@/components/CertificateModal";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 export default function HeroSection() {

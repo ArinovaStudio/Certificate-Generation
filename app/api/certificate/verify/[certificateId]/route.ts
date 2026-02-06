@@ -11,7 +11,14 @@ export async function GET( request: NextRequest, { params }: { params: Promise<{
         certificateId: true,
         employeeId: true,
         createdAt: true, 
-        isDownloaded: true
+        isDownloaded: true,
+        user:{
+          select:{
+            name: true,
+            designation: true,
+            department: true
+          }
+        }
       }
     });
 

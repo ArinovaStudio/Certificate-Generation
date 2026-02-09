@@ -74,7 +74,7 @@ export default function HeroSection() {
             onChange={(e: any) => setCertificateId(e.target.value)}
             placeholder="Certificate Id"
           />
-          <Button onClick={() => loadCertificate()}>
+          <Button disabled={certificateId.trim()===""} onClick={() => loadCertificate()}>
             {loading ? (
               <Loader2 className="animate-spin" size={20} />
             ) : (

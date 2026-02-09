@@ -37,7 +37,7 @@ export default function AdminEmployeeDashboard() {
       if (search) params.append("search", search);
       if (deptFilter !== "All") params.append("department", deptFilter);
 
-      const res = await fetch(`/api/admin/users?${params.toString()}`);
+      const res = await fetch(`/api/admin/users?${params.toString()}`,{headers:{"Content-Type":"application/json"}});
       if (res.status === 401) {
         router.push("/login");
         return;
@@ -60,7 +60,7 @@ export default function AdminEmployeeDashboard() {
   // }, [search]);
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST",headers:{"Content-Type":"application/json"} });
     router.push("/login");
   };
 
@@ -69,6 +69,7 @@ export default function AdminEmployeeDashboard() {
     try {
       const res = await fetch(`/api/admin/users?id=${deleteId}`, {
         method: "DELETE",
+        headers: {"Content-Type":"application/json"}
       });
       if (res.ok) {
         fetchUsers();

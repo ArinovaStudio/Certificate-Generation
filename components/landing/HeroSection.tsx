@@ -5,6 +5,7 @@ import Button from "../flowbite/Button";
 import Input from "../flowbite/Input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 export default function HeroSection() {
   const [text, setText] = useState("achievements");
   const [certificateId, setCertificateId] = useState("");
@@ -42,8 +43,8 @@ export default function HeroSection() {
     }
   };
   return (
-    <section className="max-md:place-items-center grid grid-cols-1 lg:grid-cols-2 gap-12 items-center md:max-w-7xl mx-auto! px-6 py-20">
-      <div className="max-md:order-2 space-y-6 flex flex-col max-md:items-center">
+    <section className="max-md:place-items-center max-h-[600px] h-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start md:max-w-7xl mx-auto! px-6 py-20">
+      <div className="max-md:order-2 py-5 justify-between space-y-6 flex flex-col max-md:items-center">
         <h1 className="text-2xl md:text-5xl font-bold leading-tight text-center md:text-left">
           The industry standard for <br />
           <span className="italic">verified</span>{" "}
@@ -54,14 +55,14 @@ export default function HeroSection() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-blue-700 inline-block"
+              className="inline-block"
             >
               {text}
             </motion.span>
           </AnimatePresence>
         </h1>
 
-        <p className="text-muted-foreground md:max-w-md text-center md:text-left">
+        <p className="text-muted-foreground md:max-w-md text-xl text-center md:text-left">
           <span className="font-bold">Is it real?</span> In the age of AI,
           companies use Lunix to guarantee authenticity of the things that
           matter most.
@@ -83,12 +84,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="max-md:order-1 relative flex justify-center md:justify-end">
-        <div className="w-72 h-72 rounded-full bg-primary/10 flex items-center justify-center">
-          <div className="w-32 h-20 rounded-xl bg-white shadow flex items-center justify-center">
-            <span className="text-sm font-medium">Verified</span>
-          </div>
-        </div>
+      <div className="max-md:order-1 max-md:max-w-100 max-md:min-h-100 w-full relative h-full flex justify-end items-end md:justify-end">
+            <Image src={"/hero.webp"} fill priority className="justify-self-end" alt={"Text"}/>
       </div>
     </section>
   );

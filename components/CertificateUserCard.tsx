@@ -26,9 +26,10 @@ export default function CertificateUserCard({
   const downloadFile = () => {
     const element = document.createElement("a");
     element.id = "download-pdf";
-    element.href = certificate.fileUrl;
+    element.href = certificate.fileUrl.replace("/raw/upload/","/raw/upload/fl_attachment/");
     element.download = certificate?.fileName;
     element.target="_blank";
+    element.rel="noopener noreferrer"
     document.body.appendChild(element);
     element.click();
     element.remove();

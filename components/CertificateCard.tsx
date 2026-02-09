@@ -18,7 +18,7 @@ interface CertificateCardProps {
 }
 
 export default function CertificateCard({
-    CopyButton,
+  CopyButton,
   certificate,
   onEdit,
   onDelete,
@@ -26,9 +26,13 @@ export default function CertificateCard({
   const downloadFile = () => {
     const element = document.createElement("a");
     element.id = "download-pdf";
-    element.href = certificate.fileUrl;
+    element.href = certificate.fileUrl.replace(
+      "/raw/upload/",
+      "/raw/upload/fl_attachment/"
+    );
     element.download = certificate?.fileName;
-    element.target="_blank";
+    element.target = "_blank";
+    element.rel = "noopener noreferrer";
     document.body.appendChild(element);
     element.click();
     element.remove();
@@ -77,19 +81,26 @@ export default function CertificateCard({
           <span className="text-blue-400">{certificate?.user?.name}</span>
         </div>
         <div className="text-slate-900 flex items-center justify-start gap-2">
-            <div>
-          Download Status:
-          </div>
+          <div>Download Status:</div>
           <div>
-            {<div className={`p-1 px-2 shadow-lg text-xs rounded-full ${certificate?.isDownloaded ? "bg-green-500" : "bg-yellow-500 animate-pulse"}`}>{certificate?.isDownloaded ? "Downloaded":"Not Downloaded!"}</div>}
+            {
+              <div
+                className={`p-1 px-2 shadow-lg text-xs rounded-full ${
+                  certificate?.isDownloaded
+                    ? "bg-green-500"
+                    : "bg-yellow-500 animate-pulse"
+                }`}
+              >
+                {certificate?.isDownloaded ? "Downloaded" : "Not Downloaded!"}
+              </div>
+            }
           </div>
         </div>
         <div className="flex items-center justify-start gap-2">
-            <div className="text-slate-900">
-          Certificate Id:
-          </div>
+          <div className="text-slate-900">Certificate Id:</div>
           <div className="text-slate-700">
-            {certificate?.certificateId} <CopyButton text={certificate?.certificateId}/>
+            {certificate?.certificateId}{" "}
+            <CopyButton text={certificate?.certificateId} />
           </div>
         </div>
       </CardContent>

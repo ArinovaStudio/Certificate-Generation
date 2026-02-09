@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import Button from "../flowbite/Button";
+import Button from "../CustomButton";
 import Input from "../flowbite/Input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";

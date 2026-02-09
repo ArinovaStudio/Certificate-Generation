@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import Button from '@/components/CustomButton';
+import Image from 'next/image';
 export default function LoginPage() {
   const router = useRouter();
 
@@ -58,8 +60,8 @@ export default function LoginPage() {
         
         {/* Header / Logo */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-            A
+          <div className="w-12 h-12 relative rounded-lg overflow-hidden mx-auto mb-4 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+            <Image src={"/logo.jpg"} fill className='object-fit' alt={"logo"}/>
           </div>
           <h1 className={`text-2xl font-bold ${textMain}`}>Arinova Portal</h1>
           <p className={`${textSub} text-sm mt-1`}>Sign in to continue</p>
@@ -106,15 +108,15 @@ export default function LoginPage() {
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/20 active:scale-[0.98] flex justify-center items-center"
+            className='w-full!'
           >
             {loading ? (
               <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
             ) : "Sign In"}
-          </button>
+          </Button>
         </form>
 
         {/* Footer */}

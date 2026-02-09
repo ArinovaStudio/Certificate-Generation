@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Button from "@/components/flowbite/Button";
+import Button from "@/components/CustomButton";
 import { User, ArrowUpRight, Menu, X } from "lucide-react";
 
 export default function Navbar() {

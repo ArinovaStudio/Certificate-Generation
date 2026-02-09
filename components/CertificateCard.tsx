@@ -7,9 +7,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import Button from "@/components/flowbite/Button";
+import Button from "@/components/CustomButton";
 import { Download, Trash2, Pencil, FileDown } from "lucide-react";
-import { Button as ShadcnButton } from "./ui/button";
 interface CertificateCardProps {
   CopyButton?: any;
   certificate: any;
@@ -47,22 +46,22 @@ export default function CertificateCard({
 
         {/* Action Buttons */}
         <div className="absolute right-3 top-3 flex gap-2">
-          <ShadcnButton
+          <Button
             size="icon"
             variant="secondary"
-            className="h-9 w-9 rounded-full"
+            className="h-9 w-9 rounded-full!"
             onClick={onEdit}
           >
             <Pencil className="h-4 w-4" />
-          </ShadcnButton>
-          <ShadcnButton
+          </Button>
+          <Button
             size="icon"
             variant="destructive"
-            className="h-9 w-9 rounded-full"
+            className="h-9 w-9 rounded-full!"
             onClick={onDelete}
           >
             <Trash2 className="h-4 w-4" />
-          </ShadcnButton>
+          </Button>
         </div>
       </div>
 

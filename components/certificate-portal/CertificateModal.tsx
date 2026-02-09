@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { format } from "date-fns";
-import { DEPARTMENTS } from "@/lib/constants";
-
+import Button from "../CustomButton";
 export default function CertificateModal({
   isOpen,
   onClose,
@@ -94,14 +92,12 @@ export default function CertificateModal({
               ? "Upload New Certificate"
               : "Edit Certificate Details"}
           </h2>
-          <button
+          <Button
             onClick={onClose}
-            className={`p-2 rounded-lg hover:bg-gray-500/10 ${
-              isDark ? "text-gray-400" : "text-gray-500"
-            }`}
+            size={"icon"}
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* Scrollable Form Body */}
@@ -186,13 +182,11 @@ export default function CertificateModal({
                   name="file"
                   accept="application/pdf"
                   required={mode === "create"}
-                  className={`block w-full text-sm ${
-                    isDark ? "text-gray-300" : "text-gray-500"
-                  }
-                    file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0
+                  className={`block w-full text-sm 
+                    file:mr-4 file:py-2.5 file:px-4 file:border-0
                     file:text-xs file:font-semibold
-                    file:bg-indigo-600 file:text-white
-                    hover:file:bg-indigo-700 transition-all cursor-pointer`}
+                    file:bg-primary file:text-white
+                    hover:file:bg-primary transition-all cursor-pointer`}
                 />
               </div>
               {mode === "edit" && (
@@ -272,27 +266,23 @@ export default function CertificateModal({
               : "border-gray-100 bg-gray-50"
           }`}
         >
-          <button
+          <Button
             onClick={onClose}
-            className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              isDark
-                ? "text-gray-400 hover:text-white hover:bg-gray-800"
-                : "text-gray-600 hover:bg-gray-200"
-            }`}
+            variant={"outline"}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             form="certForm"
             disabled={loading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-lg shadow-indigo-900/20 transition-all flex items-center gap-2"
+            className="text-sm font-medium shadow-lg shadow-indigo-900/20 transition-all flex items-center gap-2"
           >
             {loading && (
               <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></span>
             )}
             {mode === "create" ? "Upload Certificate" : "Save Changes"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

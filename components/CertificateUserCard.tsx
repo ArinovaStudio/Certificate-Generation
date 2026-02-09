@@ -7,9 +7,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import Button from "@/components/flowbite/Button";
+import Button from "@/components/CustomButton";
 import { Download, Trash2, Pencil, FileDown } from "lucide-react";
-import { Button as ShadcnButton } from "./ui/button";
 import { useState } from "react";
 interface CertificateCardProps {
   fetchCertificates: any;

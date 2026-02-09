@@ -4,7 +4,7 @@ import { Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import Button from '../CustomButton';
 interface SidebarProps {
   theme: 'light' | 'dark';
   onLogout: () => void;
@@ -41,9 +41,9 @@ export default function UserSidebar({theme, onLogout, isOpen, onClose }: Sidebar
             </span>
           </div>
           {/* Close X for Mobile */}
-          <button onClick={onClose} className="md:hidden text-gray-500">
+          <Button onClick={onClose} className="bg-background! md:hidden text-gray-500">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
+          </Button>
         </div>
 
         {/* Menu */}
@@ -59,14 +59,16 @@ export default function UserSidebar({theme, onLogout, isOpen, onClose }: Sidebar
                 key={item.href} 
                 href={item.href}
                 onClick={onClose} 
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' 
-                    : `${textSub} hover:bg-gray-800/50 hover:text-white`
-                }`}
+                // className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                //   isActive 
+                //     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' 
+                //     : `${textSub} hover:bg-gray-800/50 hover:text-white`
+                // }`}
               >
+                <Button className={`w-full my-2 rounded-lg! ${!isActive && "bg-background! text-foreground!"}`}>
                 {item.icon}
                 {item.label}
+                </Button>
               </Link>
             );
           })}
@@ -74,13 +76,13 @@ export default function UserSidebar({theme, onLogout, isOpen, onClose }: Sidebar
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-800/50">
-          <button 
+          <Button 
             onClick={onLogout}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-red-400 hover:bg-red-500/10`}
+            className={`w-full bg-background flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-red-400 hover:bg-red-500/10`}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
             Log Out
-          </button>
+          </Button>
         </div>
       </aside>
 

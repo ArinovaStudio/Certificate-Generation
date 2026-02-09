@@ -13,7 +13,7 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import Button from "./CustomButton";
 export interface User {
   id: string;
 
@@ -68,35 +68,35 @@ export default function EmployeeProfileCard({
           </h3>
         </div>
         <div className="flex items-center justify-between">
-          
           <div className="flex max-md:text-center items-center gap-1 text-gray-900">
             <div className="uppercase">Employee Type- </div>
-            {employee.employeeType==="INTR" ? "INTERN":"FREELANCER"}
-            </div>
-        <div className="max-md:absolute top-0 right-4 space-x-3 float-right md:mt-3 max-md:float-center">
-          <Button
-            type="button"
-            onClick={() => {
-              setSelectedUser(employee);
-              setIsEditOpen(true);
-            }}
-            size={"icon"}
-            className="bg-green-400 hover:bg-green-500"
-          >
-            <Edit />
-          </Button>
-          <Button
-            type="button"
-            onClick={() => {
-              setDeleteId(employee.id);
-              setDeleteOpen(true);
-            }}
-            size={"icon"}
-            variant={"destructive"}
-          >
-            <Trash2 />
-          </Button>
-        </div>
+            {employee.employeeType === "INTR" ? "INTERN" : "FREELANCER"}
+          </div>
+          <div className="max-md:absolute top-0 right-4 space-x-3 float-right md:mt-3 max-md:float-center">
+            <Button
+              type="button"
+              onClick={() => {
+                setSelectedUser(employee);
+                setIsEditOpen(true);
+              }}
+              size={"icon"}
+              className="rounded-lg! bg-green-400 hover:bg-green-500"
+            >
+              <Edit />
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setDeleteId(employee.id);
+                setDeleteOpen(true);
+              }}
+              size={"icon"}
+              className="rounded-lg!"
+              variant={"destructive"}
+            >
+              <Trash2 />
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

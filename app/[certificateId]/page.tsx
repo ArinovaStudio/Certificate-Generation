@@ -76,14 +76,14 @@ export default function CertificateVerificationPage() {
       {/* LEFT */}
       <div>
         <span className="inline-block border border-black px-3 py-1 text-xs font-semibold tracking-widest uppercase">
-          Verified Credential
+          Certificate
         </span>
 
-        <h1 className="mt-5 text-4xl font-bold text-slate-900 leading-tight">
+        <h1 className="mt-5 sm:text-4xl text-3xl font-bold text-slate-900 leading-tight">
           {data.title}
         </h1>
 
-        <p className="mt-4 text-slate-600 text-sm leading-relaxed">
+        <p className="mt-4 text-slate-600 sm:text-sm text-sm leading-relaxed">
           {data.description}
         </p>
 
@@ -126,7 +126,7 @@ export default function CertificateVerificationPage() {
           <Info label="Full Name" value={data.user.name} />
           <Info label="Email" value={data.user.email} />
           <Info label="Department" value={data.user.department || "—"} />
-          <Info label="Employee Type" value={data.user.employeeType} />
+          <Info label="Designation" value={data.user.designation || "—"} />
           <Info label="Start Date" value={new Date(data.user.startDate).toDateString()} />
           <Info label="End Date" value={new Date(data.user.endDate).toDateString()} />
         </div>
@@ -143,13 +143,11 @@ export default function CertificateVerificationPage() {
             label="Issued On"
             value={new Date(data.createdAt).toDateString()}
           />
-          <Info
-            label="Employee ID"
-            value={data.user.employeeId}
-          />
+
+          <Info label="Employee Type" value={data.user.employeeType} />
           <Info
             label="Credential Type"
-            value="Employment Certificate"
+            value={`${data.user.employeeType === "INTR" ? "Internship Certificate" : "Freelancer Certificate"}`}
           />
           <Info
             label="Verification Mode"

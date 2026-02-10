@@ -83,7 +83,7 @@ export default function CertificateVerificationPage() {
           {data.title}
         </h1>
 
-        <p className="mt-4 text-slate-600 text-lg leading-relaxed">
+        <p className="mt-4 text-slate-600 text-sm leading-relaxed">
           {data.description}
         </p>
 

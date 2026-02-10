@@ -6,10 +6,14 @@ import Input from "../flowbite/Input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 export default function HeroSection() {
   const [text, setText] = useState("Authority");
   const [certificateId, setCertificateId] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,33 +23,34 @@ export default function HeroSection() {
     return () => clearInterval(interval);
   }, []);
   const loadCertificate = async () => {
-    try {
-      setLoading(true);
-      const request = await fetch(`/api/admin/certificates/${certificateId}`, {
-        headers: { "Content-Type": "application/json" },
-      });
-      const response = await request.json();
-      if (response.success) {
-        const certificate = response.certificate;
-        const element = document.createElement("a");
-        element.href=certificate.fileUrl+"#toolbar=0&#navpanes=0&#scrollbar=0";
-        element.target="_blank";
-        document.body.appendChild(element);
-        element.click();
-        element.remove();
-      } else {
-        throw Error(response.message);
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setLoading(false);
-    }
+    router.push(`/${certificateId}`)
+    // try {
+    //   setLoading(true);
+    //   const request = await fetch(`/api/admin/certificates/${certificateId}`, {
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    //   const response = await request.json();
+    //   if (response.success) {
+    //     const certificate = response.certificate;
+    //     const element = document.createElement("a");
+    //     element.href=certificate.fileUrl+"#toolbar=0&#navpanes=0&#scrollbar=0";
+    //     element.target="_blank";
+    //     document.body.appendChild(element);
+    //     element.click();
+    //     element.remove();
+    //   } else {
+    //     throw Error(response.message);
+    //   }
+    // } catch (error: any) {
+    //   toast.error(error.message);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
   return (
-    <section className="max-md:place-items-center max-h-screen h-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start px-24 py-20">
+    <section className="max-md:place-items-center max-h-screen h-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start sm:px-20 px-4 py-20">
       <div className="max-md:order-2 py-5 justify-center h-full space-y-6 flex flex-col max-md:items-center">
-        <h1 className="text-2xl md:text-7xl font-black leading-tight text-center md:text-left">
+        <h1 className="text-5xl md:text-7xl font-black leading-tight text-center md:text-left">
          Where Credibility {" "}
           <span className="italic">Becomes</span>{" "}
           <AnimatePresence mode="wait">
@@ -74,7 +79,7 @@ export default function HeroSection() {
             placeholder="Certificate Id"
             
           />
-          <Button disabled={certificateId.trim()===""} onClick={() => loadCertificate()}>
+          <Button className="lowercase" disabled={certificateId.trim()===""} onClick={() => loadCertificate()}>
             {loading ? (
               <Loader2 className="animate-spin" size={20} />
             ) : (

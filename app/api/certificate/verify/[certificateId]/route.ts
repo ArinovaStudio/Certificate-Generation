@@ -8,6 +8,8 @@ export async function GET( request: NextRequest, { params }: { params: Promise<{
     const certificate = await prisma.certificate.findUnique({
       where: { certificateId: certificateId },
       select: {
+        title: true,
+        description: true,
         certificateId: true,
         employeeId: true,
         createdAt: true, 
@@ -15,8 +17,13 @@ export async function GET( request: NextRequest, { params }: { params: Promise<{
         user:{
           select:{
             name: true,
+            email: true,
+            employeeId: true,
             designation: true,
-            department: true
+            department: true,
+            startDate: true,
+            endDate: true,
+            employeeType: true
           }
         }
       }

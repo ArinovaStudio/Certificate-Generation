@@ -47,10 +47,3 @@ model Certificate {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-  // candidateName String
-  // position String
-  // department String
-  // userId String
-  // startDate DateTime
-  // endDate DateTime

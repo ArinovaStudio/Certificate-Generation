@@ -60,7 +60,7 @@ export default function LoginPage() {
         
         {/* Header / Logo */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 relative rounded-lg overflow-hidden mx-auto mb-4 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+          <div className="w-12 h-12 relative overflow-hidden mx-auto mb-4 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
             <Image src={"/logo.jpg"} fill className='object-fit' alt={"logo"}/>
           </div>
           <h1 className={`text-2xl font-bold ${textMain}`}>Arinova Portal</h1>
@@ -78,7 +78,7 @@ export default function LoginPage() {
             <input
               type="text"
               required
-              className={`w-full ${inputBg} border ${borderClass} ${textMain} rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+              className={`w-full ${inputBg} border ${borderClass} ${textMain} px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all`}
               placeholder="e.g. admin@arinova.studio or EMP-101"
               value={formData.identifier}
               onChange={(e) => setFormData({ ...formData, identifier: e.target.value })}
@@ -93,7 +93,7 @@ export default function LoginPage() {
             <input
               type="password"
               required
-              className={`w-full ${inputBg} border ${borderClass} ${textMain} rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+              className={`w-full ${inputBg} border ${borderClass} ${textMain} px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all`}
               placeholder="••••••••"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}

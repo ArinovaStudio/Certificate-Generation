@@ -7,14 +7,14 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 export default function HeroSection() {
-  const [text, setText] = useState("achievements");
+  const [text, setText] = useState("Authority");
   const [certificateId, setCertificateId] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setText((prev) => (prev === "achievements" ? "awards" : "achievements"));
-    }, 5000);
+      setText((prev) => (prev === "Authority" ? "Certainty" : "Authority"));
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -43,11 +43,11 @@ export default function HeroSection() {
     }
   };
   return (
-    <section className="max-md:place-items-center max-h-[600px] h-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start md:max-w-7xl mx-auto! px-6 py-20">
-      <div className="max-md:order-2 py-5 justify-between space-y-6 flex flex-col max-md:items-center">
-        <h1 className="text-2xl md:text-5xl font-bold leading-tight text-center md:text-left">
-          The industry standard for <br />
-          <span className="italic">verified</span>{" "}
+    <section className="max-md:place-items-center max-h-screen h-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start px-24 py-20">
+      <div className="max-md:order-2 py-5 justify-center h-full space-y-6 flex flex-col max-md:items-center">
+        <h1 className="text-2xl md:text-7xl font-black leading-tight text-center md:text-left">
+         Where Credibility {" "}
+          <span className="italic">Becomes</span>{" "}
           <AnimatePresence mode="wait">
             <motion.span
               key={text}
@@ -55,7 +55,7 @@ export default function HeroSection() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-block"
+              className="inline-block text-blue-500"
             >
               {text}
             </motion.span>
@@ -63,16 +63,16 @@ export default function HeroSection() {
         </h1>
 
         <p className="text-muted-foreground md:max-w-md text-xl text-center md:text-left">
-          <span className="font-bold">Is it real?</span> In the age of AI,
-          companies use Lunix to guarantee authenticity of the things that
-          matter most.
+          The official <span className="font-bold">Arinova Studio</span> system for verifying authentic internship credentials.
         </p>
 
         <div className="max-w-lg w-full flex items-center gap-3">
           <Input
+            style={{borderRadius: 0}}
             value={certificateId}
             onChange={(e: any) => setCertificateId(e.target.value)}
             placeholder="Certificate Id"
+            
           />
           <Button disabled={certificateId.trim()===""} onClick={() => loadCertificate()}>
             {loading ? (
@@ -84,8 +84,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="max-md:order-1 max-md:max-w-100 max-md:min-h-100 w-full relative h-full flex justify-end items-end md:justify-end">
-            <Image src={"/hero.webp"} fill priority className="justify-self-end" alt={"Text"}/>
+      <div className="max-md:order-1 w-full h-full">
+            <img src={"/hero.webp"} className="w-full h-full object-contain" alt={"Text"}/>
       </div>
     </section>
   );

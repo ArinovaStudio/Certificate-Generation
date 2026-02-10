@@ -10,33 +10,30 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="w-full border-b bg-white">
-      <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
+    <header className="w-full border-b bg-white absolute inset-0 h-fit">
+      <div className="flex items-center justify-between px-20 py-4">
         {/* Logo */}
         <div className="flex items-center gap-2 text-xl font-bold">
           <Image
             src="/logo.jpg"
             alt="Logo"
-            width={30}
-            height={30}
-            className="rounded-lg"
+            width={45}
+            height={45}
           />
-          <span className="hidden sm:block">ARINOVA STUDIO</span>
         </div>
 
         {/* Desktop buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-3 cursor-pointer">
           <Link href="https://www.arinova.studio/" target="_blank">
-            <Button>
+            <Button className="px-12">
+              Arinova Studio
               <ArrowUpRight className="mr-1" />
-              Visit Arinova Studio
             </Button>
           </Link>
 
           <Link href="/login">
-            <Button>
-              <User className="mr-1" />
-              Login
+            <Button className="px-10">
+              <User className="mr-0.5" />
             </Button>
           </Link>
         </div>
@@ -60,15 +57,14 @@ export default function Navbar() {
             onClick={() => setOpen(false)}
           >
             <Button className="w-full justify-center">
+              Arinova Studio
               <ArrowUpRight className="mr-1" />
-              Visit Arinova Studio
             </Button>
           </Link>
 
           <Link href="/login" onClick={() => setOpen(false)}>
             <Button className="w-full justify-center">
-              <User className="mr-1" />
-              Login
+              <User className="mr-0.5" />
             </Button>
           </Link>
         </div>
